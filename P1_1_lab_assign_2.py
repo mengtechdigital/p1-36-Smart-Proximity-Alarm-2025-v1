@@ -40,6 +40,7 @@ def distance_cm():
 
 
 def band_for_distance(d):
+    print(d, "cm")
     if d > 50:
         return 0
     elif 50 >= d >= 30:
@@ -62,19 +63,18 @@ try:
         distance = distance_cm()
         band = band_for_distance(distance)
 
-        if band != prev_band:
-            if band in sounds:
-                if not playing or band > (current_playing_band or 0):
-                    current_playing_band = band
-                    playing = True
-                    sounds[band].play()
-            prev_band = band
+        if band in sounds:
+            if not playing or band > (current_playing_band or 0):
+                current_playing_band = band
+                playing = True
+                sounds[band].play()
+        prev_band = band
 
         if playing and not pygame.mixer.Channel(0).get_busy():
             playing = False
             current_playing_band = None
 
-        time.sleep(0.1)
+        time.sleep(0.5)
 except KeyboardInterrupt:
     pass
 finally:

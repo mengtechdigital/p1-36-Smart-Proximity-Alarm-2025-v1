@@ -33,6 +33,7 @@ def distance_cm():
 
 
 def beep_freq(d):
+    print(d, "cm")
     if d > 50:
         return -1
     elif 50 >= d >= 30:
