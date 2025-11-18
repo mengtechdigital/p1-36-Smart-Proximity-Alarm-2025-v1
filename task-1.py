@@ -1,15 +1,9 @@
-import pygame
+from gpiozero import Button, LED
 import time
+import pygame
 
 pygame.init()
 
-my_sound = pygame.mixer.Sound(
-    f"/home/pi/work/gpio-music-box/sound samples/drum_cymbal_hard.wav"
-)
-
-# my_sound.play()
-
-time.sleep(3)
 
 drum = pygame.mixer.Sound(
     "/home/pi/work/gpio-music-box/sound samples/drum_bass_hard.wav"
@@ -20,18 +14,8 @@ guitar = pygame.mixer.Sound(
     "/home/pi/work/gpio-music-box/sound samples/guit_harmonics.wav"
 )
 
-drum.play()
-# bell.play()
-# bird.play()
-# guitar.play()
+btn_bell = Button(17)
 
-time.sleep(3)
-drum.play()
-time.sleep(3)
 
-from gpiozero import Button, LED
-
-btn = Button(17)
-led = LED(4)
-btn.when_pressed = led.on
-btn.when_released = led.off
+btn_bell.when_pressed = bell.play
+time.sleep(100)

@@ -18,7 +18,7 @@ def distance_cm():
     time.sleep(0.1)
 
     GPIO.output(TRIG, True)
-    time.sleep(0.1)
+    time.sleep(0.00001)
     GPIO.output(TRIG, False)
 
     while GPIO.input(ECHO) == 0:
@@ -28,7 +28,7 @@ def distance_cm():
         end = time.time()
 
     pulse = end - start
-    dist = pulse * 17150.0  # (34300 cm/s) / 2
+    dist = pulse * 17150  # (34300 cm/s) / 2
     return round(dist, 1)
 
 
@@ -48,7 +48,7 @@ def beep_freq(d):
 try:
     while True:
         distance = distance_cm()
-        detected_beep_frequency = beep_freq(d)
+        detected_beep_frequency = beep_freq(distance)
 
         if detected_beep_frequency == -1:
             GPIO.output(BUZZER, GPIO.LOW)

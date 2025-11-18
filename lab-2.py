@@ -4,11 +4,10 @@ import RPi.GPIO as GPIO
 
 pygame.init()
 
-# Update <fileN>.wav to actual filenames
-a1 = pygame.mixer.Sound("/home/pi/gpio_music_box/lab/<file1>.wav")  # 50–30 cm
-a2 = pygame.mixer.Sound("/home/pi/gpio_music_box/lab/<file2>.wav")  # 30–20 cm
-a3 = pygame.mixer.Sound("/home/pi/gpio_music_box/lab/<file3>.wav")  # 20–10 cm
-a4 = pygame.mixer.Sound("/home/pi/gpio_music_box/lab/<file4>.wav")  # < 10 cm
+a1 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/10cm.wav")  # 50–30 cm
+a2 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/20cm.wav")  # 30–20 cm
+a3 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/30cm.wav")  # 20–10 cm
+a4 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/50cm.wav")  # < 10 cm
 
 GPIO.setmode(GPIO.BCM)
 
@@ -20,11 +19,12 @@ GPIO.setup(ECHO, GPIO.IN)
 
 
 def distance_cm():
+    print("Distance Measurement in Progress")
     GPIO.output(TRIG, False)
     time.sleep(0.1)
 
     GPIO.output(TRIG, True)
-    time.sleep(0.1)
+    time.sleep(0.00001)
     GPIO.output(TRIG, False)
 
     while GPIO.input(ECHO) == 0:
@@ -34,7 +34,7 @@ def distance_cm():
         end = time.time()
 
     pulse = end - start
-    dist = pulse * 17150.0  # (34300 cm/s) / 2
+    dist = pulse * 17150  # (34300 cm/s) / 2
     return round(dist, 1)
 
 
@@ -56,8 +56,8 @@ sounds = {1: a1, 2: a2, 3: a3, 4: a4}
 try:
     prev_band = None
     while True:
-        d = distance_cm()
-        band = band_for_distance(d)
+        distance = distance_cm()
+        band = band_for_distance(distance)
 
         if band != prev_band:
             if band in sounds:
