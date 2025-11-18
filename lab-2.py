@@ -3,11 +3,12 @@ import time
 import RPi.GPIO as GPIO
 
 pygame.init()
+pygame.mixer.set_num_channels(1)
 
-a1 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/10cm.wav")  # 50–30 cm
-a2 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/20cm.wav")  # 30–20 cm
-a3 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/30cm.wav")  # 20–10 cm
-a4 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/50cm.wav")  # < 10 cm
+a1 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/50cm.wav")  # 50–30 cm
+a2 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/30cm.wav")  # 30–20 cm
+a3 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/20cm.wav")  # 20–10 cm
+a4 = pygame.mixer.Sound("/home/pi/work/gpio-music-box/10cm.wav")  # < 10 cm
 
 GPIO.setmode(GPIO.BCM)
 
@@ -55,14 +56,23 @@ sounds = {1: a1, 2: a2, 3: a3, 4: a4}
 
 try:
     prev_band = None
+    current_playing_band = None
+    playing = False
     while True:
         distance = distance_cm()
         band = band_for_distance(distance)
 
         if band != prev_band:
             if band in sounds:
-                sounds[band].play()
+                if not playing or band > (current_playing_band or 0):
+                    current_playing_band = band
+                    playing = True
+                    sounds[band].play()
             prev_band = band
+
+        if playing and not pygame.mixer.Channel(0).get_busy():
+            playing = False
+            current_playing_band = None
 
         time.sleep(0.1)
 except KeyboardInterrupt:
